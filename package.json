@@ -1,0 +1,24 @@
+{
+  "name": "yf-limiter",
+  "version": "1.0.0",
+  "description": "A limiter that use to prevent overflow from action / event ..",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/issactomatotan/yf-limiter.git"
+  },
+  "keywords": [
+    "throttling",
+    "debouncing",
+    "limiter"
+  ],
+  "author": "Issac Tomatotan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/issactomatotan/yf-limiter/issues"
+  },
+  "homepage": "https://github.com/issactomatotan/yf-limiter#readme"
+}
