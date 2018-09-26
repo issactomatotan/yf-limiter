@@ -1,6 +1,6 @@
 # yf-limiter
 
-  version: 1.0.1
+  version: 1.0.2
 
   A limiter that **prevent overflow** from action / event / request ..
 
