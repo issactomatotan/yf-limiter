@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>yf-limiter test page</title>
+    </head>
+    <body>
+<style>
+div{
+    height: 500px;width: 200px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    overflow-y: scroll;
+}
+body > div{
+    float: left;
+    width: auto;height: auto;overflow: hidden;
+    border: 0;
+    margin-right: 20px;
+}
+</style>
+
+<div>
+    debounce：<br>
+    <div id="res1">
+    </div>
+</div>
+
+<div>
+    throttle：<br>
+    <div id="res2">
+    </div>
+</div>
+
+<div>
+    limiter：<br>
+    <div id="res3">
+    </div>
+</div>
+
+
+
+<script src="./index.js"></script>
+<script>
+let 
+    res1 = document.getElementById( 'res1' ),
+    res2 = document.getElementById( 'res2' ),
+    res3 = document.getElementById( 'res3' );
+
+function pusher(u) {
+    let timer = [ 0,0,0 ],
+        cont = [res1, res2, res3]
+
+    return function(t) {
+        cont[u].innerHTML += ( t ? t : '' ) + '<br>';
+        cont[u].scrollTop = 1000000000;
+        timer[u]++
+    }
+}
+
+function debounce() {
+    let 
+        push = pusher(0),
+        count = 1, run = 1,
+        bounce = YF.debounce( ()=>{
+            push( '<span style="background: green;color: #fff;">run：'+ run )
+            run++
+        }, 1000 );
+
+    function loop() {count++
+        
+        if( !(count%20) ) {
+            push( '<span style="background: red;color: #fff;">stop：' );
+            setTimeout( loop, 3000 );
+            return
+        } else {
+            push( 'call：' );
+        }
+        
+        bounce();
+        setTimeout( loop, 100 )
+    }
+    loop()
+}
+
+function throttle() {
+    let 
+        push = pusher(1),
+        run = 1,
+        fuc = YF.throttle( ()=>{
+            push( '<span style="background: green;color: #fff;">run：'+ run )
+            run++
+        }, 500 )
+
+    function loop() {
+        push( 'call：' )
+        if (fuc()) {
+            console.log('done throttle')
+        } else {
+            //console.log('fail')
+        }
+        setTimeout( loop, 100 )
+    }
+    loop()
+}
+
+function limiter() {
+    let 
+        push = pusher(2),
+        run = 1,
+        fuc = YF.limiter( ()=>{
+            push( '<span style="background: green;color: #fff;">run：'+ run )
+            run++
+        }, 5, 10 )
+
+    function loop() {
+
+        push( 'call：' )
+        if (fuc()) {
+            console.log('done limiter')
+        } else {
+            //console.log('fail')
+        }
+        setTimeout( loop, 100 )
+    }
+    loop()
+}
+
+window.onload = function() {
+    debounce()
+    throttle()
+    limiter()
+
+    setInterval( function() {
+        res1.innerHTML = res2.innerHTML = res3.innerHTML = ''
+    }, 15000 )
+} // end
+
+
+
+</script>
+    </body>
+</html>

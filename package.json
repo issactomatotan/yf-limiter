@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "A limiter that use to prevent overflow from action / event ..",
   "main": "index.js",
+  "engines": {
+    "node": ">=4.2.4"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,7 +18,11 @@
     "debouncing",
     "limiter"
   ],
-  "author": "Issac Tomatotan",
+  "author": {
+    "email": "tomato082014@gmail.com",
+    "name": "Issac Tomatotan",
+    "url": "https://issactomatotan.github.io"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/issactomatotan/yf-limiter/issues"
