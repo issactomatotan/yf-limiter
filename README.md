@@ -1,14 +1,18 @@
 # yf-limiter
 
-  version: 1.0.2
+  version: 2.0.0
 
   A limiter that **prevent overflow** from action / event / request ..
+
+
 
 ## Installation
 
   Node:
 
     $ npm install yf-limiter
+
+
 
 ## Example
 
@@ -18,28 +22,6 @@
 const YF = require('yf-limiter');
 ```
 
-### Limiter
-5 times function called will be allowed in every 10 second, the other would be rejected
-```js
-let limited = YF.limiter( function(){
-          console.log( 'called' )
-     }, 5, 10 )
-
-setInterval( limited , 1000 );
-
-// called, called, called, called, called, '', '', '', '', '', called, called ...
-```
-
-### Throttle
-```js
-let throttled = YF.throttle( function(){
-        console.log( 'called' )
-    }, 2000 )
-
-setInterval( throttled , 1000 );
-
-// called, '', called, '', called, '', called, '', called ...
-```
 
 ### Debounce
 ```js
@@ -58,6 +40,86 @@ setInterval( function() {
 // '', '', '', '', called ...
 ```
 
+
+### Throttle
+```js
+let throttled = YF.throttle( function(){
+        console.log( 'called' )
+    }, 2000 )
+
+setInterval( throttled , 1000 );
+
+// called, '', called, '', called, '', called, '', called ...
+```
+
+or:
+
+```js
+let throttled = YF.throttle( 2000 )
+
+setInterval( ()=>{
+    if( throttled() ) {
+        console.log( 'called' )
+    } else {
+        console.log( '' )
+    }
+} , 1000 );
+
+// called, '', called, '', called, '', called, '', called ...
+```
+
+
+### Limiter
+5 times function called will be allowed in every 10 second, the other would be rejected
+```js
+let limited = YF.limiter( function(){
+          console.log( 'called' )
+     }, 5, 10 )
+
+setInterval( limited , 1000 );
+
+// called, called, called, called, called, '', '', '', '', '', called, called ...
+```
+
+or:
+
+```js
+let limited = YF.limiter( 5, 10 )
+
+setInterval( ()=>{
+    if( limited() ) {
+        console.log( 'called' )
+    } else {
+        console.log( '' )
+    }
+    
+}, 1000 );
+
+// called, called, called, called, called, '', '', '', '', '', called, called ...
+```
+
+or:
+
+```js
+let limited = YF.limiter( function(a){
+          console.log( a )
+     }, 5, 10 )
+
+setInterval( ()=>{
+
+    limited('1')
+    if(run % 3) limited('2')
+    if(run % 6 && run < 50) limited('3')
+    
+}, 1000 );
+
+// [1] 1, 1, 1, 1, 1, '', '', '' ...
+// [2] '', 2, 2, '', 2, 2, '', 2, '' ...
+// [3] '', 3, 3, 3, 3, 3, '', '' ...
+```
+
+
+
 ## API
 
 ### YF.limiter(fn, limit, cycle)
@@ -66,7 +128,10 @@ setInterval( function() {
 * @param {function} fn // function
 * @param {int} limit // number of allowed times
 * @param {int} cycle // time in second
-*
+* @param {string} split // split the timeline by name
+* 
+* @param {string} name // timeline name
+* 
 * @return {function} // the limited function
 ```
 

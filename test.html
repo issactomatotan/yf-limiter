@@ -7,7 +7,7 @@
     <body>
 <style>
 div{
-    height: 500px;width: 200px;
+    height: 500px;width: 100px;
     padding: 20px;
     border: 1px solid #ccc;
     overflow-y: scroll;
@@ -31,10 +31,25 @@ body > div{
     <div id="res2">
     </div>
 </div>
+<div>
+    throttle2：<br>
+    <div id="res3">
+    </div>
+</div>
 
 <div>
     limiter：<br>
-    <div id="res3">
+    <div id="res4">
+    </div>
+</div>
+<div>
+    limiter2：<br>
+    <div id="res5">
+    </div>
+</div>
+<div>
+    limiter3：<br>
+    <div id="res6">
     </div>
 </div>
 
@@ -45,11 +60,14 @@ body > div{
 let 
     res1 = document.getElementById( 'res1' ),
     res2 = document.getElementById( 'res2' ),
-    res3 = document.getElementById( 'res3' );
+    res3 = document.getElementById( 'res3' ),
+    res4 = document.getElementById( 'res4' ),
+    res5 = document.getElementById( 'res5' ),
+    res6 = document.getElementById( 'res6' );
 
 function pusher(u) {
-    let timer = [ 0,0,0 ],
-        cont = [res1, res2, res3]
+    let timer = [ 0,0,0,0,0,0 ],
+        cont = [res1, res2, res3, res4, res5, res6]
 
     return function(t) {
         cont[u].innerHTML += ( t ? t : '' ) + '<br>';
@@ -78,7 +96,7 @@ function debounce() {
         }
         
         bounce();
-        setTimeout( loop, 100 )
+        setTimeout( loop, 500 )
     }
     loop()
 }
@@ -99,14 +117,34 @@ function throttle() {
         } else {
             //console.log('fail')
         }
-        setTimeout( loop, 100 )
+        setTimeout( loop, 500 )
+    }
+    loop()
+}
+
+function throttle2() {
+    let 
+        push = pusher(2),
+        run = 1,
+        fuc = YF.throttle( 500 )
+
+    function loop() {
+        push( 'call：' )
+        if (fuc()) {
+            push( '<span style="background: green;color: #fff;">run：'+ run )
+            run++
+            console.log('done throttle')
+        } else {
+            //console.log('fail')
+        }
+        setTimeout( loop, 500 )
     }
     loop()
 }
 
 function limiter() {
     let 
-        push = pusher(2),
+        push = pusher(3),
         run = 1,
         fuc = YF.limiter( ()=>{
             push( '<span style="background: green;color: #fff;">run：'+ run )
@@ -121,7 +159,53 @@ function limiter() {
         } else {
             //console.log('fail')
         }
-        setTimeout( loop, 100 )
+        setTimeout( loop, 500 )
+    }
+    loop()
+}
+
+function limiter2() {
+    let 
+        push = pusher(4),
+        run = 1,
+        fuc = YF.limiter( 5, 10 )
+
+    function loop() {
+
+        push( 'call：' )
+
+        if (fuc()) {
+            push( '<span style="background: green;color: #fff;">run：'+ run )
+            run++
+            console.log('done limiter')
+
+        } else {
+            //console.log('fail')
+        }
+        setTimeout( loop, 500 )
+    }
+    loop()
+}
+
+function limiter3() {
+    let 
+        push = pusher(5),
+        run = 1,
+        fuc = YF.limiter( (a)=>{
+            push(a)
+        }, 5, 10, true )
+
+    function loop() {
+
+        push( 'call：'+ run )
+
+        fuc('1')
+        if(run % 3) fuc('2')
+        if(run % 6 && run < 50) fuc('3')
+        
+        push( '-----------' )
+        run++;
+        setTimeout( loop, 1000 )
     }
     loop()
 }
@@ -129,10 +213,13 @@ function limiter() {
 window.onload = function() {
     debounce()
     throttle()
+    throttle2()
     limiter()
+    limiter2()
+    limiter3()
 
     setInterval( function() {
-        res1.innerHTML = res2.innerHTML = res3.innerHTML = ''
+        res1.innerHTML = res2.innerHTML = res3.innerHTML = res4.innerHTML = res5.innerHTML = ''
     }, 15000 )
 } // end
 

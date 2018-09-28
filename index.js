@@ -8,35 +8,94 @@ let YF = {
     * @param {function} fn // function
     * @param {int} limit // number of allowed times
     * @param {int} cycle // time in second
+    * @param {string} split // split the timeline by name
+    * 
+    * @param {string} name // timeline name
     * 
     * @return {function} // the limited function
     */
-    limiter: (fn, limit, cycle)=> {
+    limiter: (fn, limit, cycle, split)=> {
         
-        let 
-            ary = [];
-
-            cycle = cycle * 1000;
-
-        function filter(now) {
-            ary = ary.filter( (item)=> now < item + cycle )
-            return ary.length
+        if (typeof fn != 'function') {
+            split = cycle,
+            cycle = limit,
+            limit = fn,
+            fn = null
         }
+        
+        if (split) {
+            split = gettime();
+        }
+        
+        cycle = cycle * 1000;
 
-        let fuc = function() {
-            let now = new Date().getTime();
+        let
+            fuc,
+            split_checkpoint = split ? cycle*3 : null,
+            ary = split ? {} : [];
 
-            if (ary.length >= limit && filter(now) >= limit) {
+        function gettime() {
+            return new Date().getTime()
+        }
+        
+        function check_split(now) {
+            
+            if (now > split) {
+                split = now + split_checkpoint;
+            } else {
+                return
+            }
+
+            for (let i in ary) { 
+                if (ary[i][ary[i].length - 1] < now - cycle) {
+                    delete ary[i]
+                }
+            }
+        }
+        
+        function f_split(name) {
+            let now = gettime();
+
+            check_split(now);
+            
+            if (!ary[name]) {
+                ary[name] = []
+            } else if (ary[name].length && ary[name].length >= limit && (() => {
+                ary[name] = ary[name].filter((item) => now < item + cycle )
+                return ary[name].length
+            })() >= limit ){
+                return false
+            }
+                
+            ary[name].push(now);
+            if(typeof fn === 'function') fn.apply(this, arguments);
+            
+            return true
+        }
+        
+        function f_no_split() {
+            let now = gettime();
+
+            if (ary.length >= limit && (() => {
+                ary = ary.filter( (item)=> now < item + cycle )
+                return ary.length
+            })() >= limit) {
                 return false
             }
 
             ary.push( now );
-            fn.apply(this, arguments);
+            if(typeof fn === 'function') fn.apply(this, arguments);
             return true
         }
 
+        if (split) {
+            fuc = f_split
+        } else {
+            fuc = f_no_split
+        }
+
         fuc.cancel = function() {
-            ary = []
+            ary = split ? {} : []
         }
 
         return fuc
@@ -89,6 +148,11 @@ let YF = {
     */
     throttle: (fn, timeout) => {
         
+        if (typeof fn != 'function') {
+            timeout = fn,
+            fn = null;
+        }
+        
          let 
             timer;
 
@@ -98,7 +162,9 @@ let YF = {
             if( !timer || now > timer + timeout ) {
                 timer = now;
 
-                fn.apply(this, arguments)
+                if (typeof fn === 'function') {
+                    fn.apply(this, arguments)
+                }
                 return true
             } else {
                 return false
