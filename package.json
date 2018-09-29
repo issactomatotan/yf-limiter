@@ -1,13 +1,13 @@
 {
   "name": "yf-limiter",
-  "version": "2.0.0",
-  "description": "A limiter that use to prevent overflow from action / event ..",
+  "version": "2.0.1",
+  "description": "A limiter that prevent overflow from action / event / request ..",
   "main": "index.js",
   "engines": {
     "node": ">=4.2.4"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test.js"
   },
   "repository": {
     "type": "git",

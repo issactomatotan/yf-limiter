@@ -1,6 +1,6 @@
 # yf-limiter
 
-  version: 2.0.0
+  version: 2.0.1
 
   A limiter that **prevent overflow** from action / event / request ..
 
@@ -52,7 +52,7 @@ setInterval( throttled , 1000 );
 // called, '', called, '', called, '', called, '', called ...
 ```
 
-or:
+or ( pass, fail ):
 
 ```js
 let throttled = YF.throttle( 2000 )
@@ -81,7 +81,7 @@ setInterval( limited , 1000 );
 // called, called, called, called, called, '', '', '', '', '', called, called ...
 ```
 
-or:
+or ( pass, fail ):
 
 ```js
 let limited = YF.limiter( 5, 10 )
@@ -98,12 +98,12 @@ setInterval( ()=>{
 // called, called, called, called, called, '', '', '', '', '', called, called ...
 ```
 
-or:
+or ( split the timeline, pass last argument as **true** to create a split limiter, and name for each function called ):
 
 ```js
 let limited = YF.limiter( function(a){
           console.log( a )
-     }, 5, 10 )
+     }, 5, 10, true )
 
 setInterval( ()=>{
 
@@ -122,19 +122,6 @@ setInterval( ()=>{
 
 ## API
 
-### YF.limiter(fn, limit, cycle)
-```
-* Limit a function called times in a time period.
-* @param {function} fn // function
-* @param {int} limit // number of allowed times
-* @param {int} cycle // time in second
-* @param {string} split // split the timeline by name
-* 
-* @param {string} name // timeline name
-* 
-* @return {function} // the limited function
-```
-
 ### YF.debounce(fn, timeout)
 ```
 * Debounce a function called.
@@ -145,12 +132,27 @@ setInterval( ()=>{
 ```
 
 ### YF.throttle(fn, timeout)
+### YF.throttle(timeout)
 ```
 * Throttle a function called.
 * @param {function} fn // function
 * @param {int} timeout // time in million second
 * 
 * @return {function} // the throttled function
+```
+
+### YF.limiter(fn, limit, cycle)
+### YF.limiter(fn, limit, cycle, split)
+```
+* Limit a function called times in a time period.
+* @param {function} fn // function
+* @param {int} limit // number of allowed times
+* @param {int} cycle // time in second
+* @param {string} split // split the timeline by name
+* 
+* @param {string} name // timeline name
+* 
+* @return {function} // the limited function
 ```
 
 
